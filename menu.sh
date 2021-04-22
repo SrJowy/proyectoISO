@@ -77,12 +77,12 @@ function personalIndex(){
 #                 6) CREAR VIRTUAL HOST                   #
 ###########################################################
 function createVirtualHost(){
-	sudo rm /etc/apache2/sites-available/laguntest.conf
+	#sudo rm /etc/apache2/sites-available/laguntest.conf
 	cd /var/www
 	sudo mkdir laguntest
 	cd laguntest
 	sudo mkdir -p public_html
-	sudo cp index.html /var/www/laguntest/public_html
+	sudo cp /var/www/html/index.html /var/www/laguntest/public_html/
 	sudo chown -R www-data:www-data /var/www/laguntest/public_html
 	sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/laguntest.conf
 	sudo sed -i "s/80/8888/g" /etc/apache2/sites-available/laguntest.conf
@@ -237,7 +237,9 @@ function instalandoLibreriasPythonLagunTest(){
 ###########################################################
 
 function instalandoAplicacionLaguntest(){
-	cp -r grupo /var/www/laguntest/public_html 
+	cp *.php *.sh *.py *.gif /var/www/laguntest/public_html/
+	cp -r textos /var/www/laguntest/public_html/
+
 }
 
 ###########################################################
