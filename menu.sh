@@ -129,7 +129,7 @@ function phpInstall() {
     		sleep 1
 		else
     #PHP instalado
-    		echo "PHP ya estaba instalado\n" 5 40    
+    		echo "PHP ya estaba instalado\n"     
     		sleep 1
 		fi
 }
