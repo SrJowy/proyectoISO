@@ -205,14 +205,15 @@ function creandoEntornoVirutalPython3(){
 	then 
 		instalandoPaquetesUbuntuLagunTest
 	else
-		sudo pip install virtualenv
+		sudo pip3 install venv
 		cd /var/www/laguntest/public_html/
 		if [ -d ".env" ]
 		then
 			echo "Entorno virtual creado\n"
 			sleep 1	
-		else 
-			sudo virutalenv -p python3.env
+		else
+			sudo mkdir /var/www/laguntest/public_html/.env
+			sudo python3 -m virutalenv /var/wwww/public_html/.env
 		fi
 	fi	
 }
@@ -237,9 +238,77 @@ function instalandoLibreriasPythonLagunTest(){
 ###########################################################
 
 function instalandoAplicacionLaguntest(){
-	cp *.php *.sh *.py *.gif /var/www/laguntest/public_html/
-	cp -r textos /var/www/laguntest/public_html/
+	echo "Instalando la aplicación..."
+	sudo cp *.php *.sh *.py *.gif /var/www/laguntest/public_html/
+	sudo cp -r textos /var/www/laguntest/public_html/
+}
 
+###########################################################
+#           14) PASAR LA PROPIEDAD WWW-DATA               #
+###########################################################
+
+function pasoPropiedad(){
+	echo "Dando permisos a www-data..."
+	sudo chown -R www-data:www-data /var/www
+}
+
+###########################################################
+#             15) COMPROBAR WEBPROCESS.SH                 #
+###########################################################
+
+function comprobarWebprocess(){
+	cd /var/www/laguntest/public_html/
+	sudo chmod uo+x webprocess.sh
+	sudo chown -R www-data:www-data webprocess.sh
+	sudo -u root su - www-data -s /bin/bash
+	cd /var/www/laguntest/public_html/
+	./webprocess.sh textos/english.doc.txt
+}
+
+
+###########################################################
+#           16) VISUALIZAR LA APLICACION                  #
+###########################################################
+
+function visualizandoAplicacion(){
+	firefox http://127.0.0.1:8888/index.php
+}
+
+###########################################################
+#           17) VISUALIZAR LA APLICACION                  #
+###########################################################
+
+function viendoLogs(){
+	echo 'visualizando el documento de errores..'
+	tail -n100 /var/log/apache2/error.log
+}
+
+###########################################################
+#           18) DESCRIBIR PASOS PARA INSTALAR SSH         #
+###########################################################
+
+function instalarSSH(){
+	sudo aptitude install ssh 
+	echo 'Para conectarte de forma remota a otro dispositivo necesitas su nombre de usuario, su IP y su contraseña. 
+	Para obtener la IP en Linux puedes usar "hostname -I | awk '{print $1}'" en la terminal del dispositivo que quieres utilizar de forma remota.
+	Para obtener la IP en Windows puedes usar "..." en cmd del dispositivo que quieres utilizar de forma remota.
+	Introduce el usuario:'
+	read user
+	'Introduce la IP:'
+	read IP
+	userIp=$user@$IP
+	shh userIp
+}
+
+###########################################################
+#           19) CONTROL DE LOS INTENTOS DE CONEXIÓN       #
+###########################################################
+
+function controlConexiones() {
+	expr1="auth.log."
+	expr2 = "gz"
+	salir = 0
+	less /var
 }
 
 ###########################################################
@@ -273,7 +342,17 @@ do
 		echo -e "10) Instalar paquetes Ubuntu \n"
 		echo -e "11) Crear entorno virtual de Python \n"
 		echo -e "12) Instalar librerias Python3 \n"
+		echo -e "13) Instalar la aplicacion laguntest \n"
+		echo -e "14) Pasar la propiedad a www-data  \n"
+		echo -e "15) Comprobar que el script “webprocess.sh” funciona correctamente  \n"
+		echo -e "16) Visualizar la aplicación  \n"
+		echo -e "17) Ver los logs o errores producidos por apache  \n"
+		echo -e "18) Describe los pasos necesarios para instalar laguntest en un servidor remoto utilizando ssh  \n"
+		echo -e "19) Controla los intentos de conexión de ssh \n"
 		echo -e "20) fin \n"
+
+
+
         read -p "Elige una opcion:" opcionmenuppal
 	case $opcionmenuppal in
  			1) apacheInstall;;
@@ -288,6 +367,13 @@ do
 			10) instalandoPaquetesUbuntuLagunTest;;
 			11) creandoEntornoVirutalPython3;;
 			12) instalandoLibreriasPythonLagunTest;;
+			13) instalandoAplicacionLaguntest;;
+			14) pasoPropiedad;;
+			15) comprobarWebprocess;;
+			16) visualizandoAplicacion;;
+			17) viendoLogs;;
+			18)	instalarSHH;;
+			19)	controlConexiones;;
 			20) fin;;
 			*) ;;
 
