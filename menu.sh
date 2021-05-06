@@ -6,6 +6,8 @@
 ###########################################################
 function apacheInstall()
 {
+	sudo apt install aptitude 										#si se instala en una maquina nueva es necesario
+	sudo apt install firefox
 	aux=$(aptitude show apache2 | grep "State: installed")
 	aux2=$(aptitude show apache2 | grep "Estado: instalado")
 	aux3=$aux$aux2
