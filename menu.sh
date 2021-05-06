@@ -288,15 +288,33 @@ function viendoLogs(){
 
 function instalarSSH(){
 	sudo aptitude install ssh 
-	echo 'Para conectarte de forma remota a otro dispositivo necesitas su nombre de usuario, su IP y su contraseña. 
-	Para obtener la IP en Linux puedes usar "hostname -I | awk '{print $1}'" en la terminal del dispositivo que quieres utilizar de forma remota.
-	Para obtener la IP en Windows puedes usar "..." en cmd del dispositivo que quieres utilizar de forma remota.
-	Introduce el usuario:'
-	read user
-	'Introduce la IP:'
+	echo 'SSH (Secure SHell) es un software y protocolo que permite el acceso remoto a un servidor mediante un canal seguro con la información cifrada. Tambien puedes usarlo para controlar otro dispositivo. El software suele venir instalado en dispotivos Linux pero por si acaso puedes instalarlo con "sudo aptitude install openssh-server".
+	Para el cliente necesitas otro dispositivo. En Linux y Mac ya viene instalado el software necesario para poder conectarte a ellos, para Windows necesitaras el programa Putty. 
+	Una vez tengas cliente y servidor preparados asegurate de que SSH esta activado, para ello usa "systemctl enable ssh" en tu ordenador.  
+	Para conectarte al servidor necesitas el nombre de usuario, su IP y su contraseña. 
+	Para obtener la IP en Linux puedes usar "hostname -I" en la terminal del servidor remoto.
+	Ahora para conectarte al servidor usar "ssh usuario@IP" donde usuario es el nombre de usuario del servidor al que te quieres conectar.
+	Una vez hecho esto te pedira la contraseña introducela y ya estaras usando el servidor remotamente.'
+	echo 'Para ejecutar la applicación web desde un servidor remoto es necesario que cumplas los requisitos mencionados anteriormente.
+	Si tienes la IP, nombre de usuario y contraseña ya puedes empezar.' 
+	echo -e 'Introduce la IP del servidor remoto:'
 	read IP
-	userIp=$user@$IP
-	shh userIp
+	echo -e 'Ahora introduce el nombre de usuario del servidor:'
+	read user
+	echo -e 'Primero de todo es necesario que tenga los archivos.
+	¿Tienes los archivos instalados en el servidor? [SI/NO]'
+	read respuesta
+	if [ $respuesta=NO ]
+	then
+		echo 'Se van a copiar los archivos de instalación al servidor web'
+		scp -r ../proyecto $user@$IP:/home/$user/
+		fi
+	echo 'Se va a instalar la aplicación en el servidor'
+		
+	echo 'Ahora vas a conectarte al sevidor'	
+	ssh $user@$IP 
+
+	
 }
 
 ###########################################################
@@ -304,10 +322,23 @@ function instalarSSH(){
 ###########################################################
 
 function controlConexiones() {
-	expr1="auth.log."
-	expr2 = "gz"
-	salir = 0
-	less /var
+	cd /var/log
+	part1 = auth.log.
+	part2 = .gz
+	ls -d auth*
+	if [ $? = 0 ] 
+	then
+		cant = ls -d auth* | wc -l
+		while [ cant != 0 ]
+		do
+			valor = $cant-1
+			aux = $part1$valor$part2
+			ls -d aux
+			if [ $? != 0 ]
+			then
+				lineas = grep "Failed password" $part1$valor | wc -l
+				if [ lineas  ]
+                
 }
 
 ###########################################################
