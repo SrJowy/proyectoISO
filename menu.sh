@@ -326,24 +326,26 @@ function instalarSSH(){
 ###########################################################
 
 function controlConexiones() {
-	cd /var/log
-	part1 = auth.log.
-	part2 = .gz
-	ls -d auth*
-	if [ $? = 0 ] 
-	then
-		cant = ls -d auth* | wc -l
-		while [ cant != 0 ]
-		do
-			valor = $cant-1
-			aux = $part1$valor$part2
-			ls -d aux
-			if [ $? != 0 ]
-			then
-				lineas = grep "Failed password" $part1$valor | wc -l
-				if [ lineas  ]
-                
-}
+	cat /var/log/auth* > ./logs.txt
+	echo "Los intentos de conexión por ssh, esta semana y este mes han sido:"
+	echo " "
+	grep "Failed password" logs.txt | while read -r line; do
+		echo ${line} > linea.txt
+		fecha=$(cut -d " " -f 1,2,3 linea.txt)
+		user=$(cut -d " " -f 9 linea.txt)
+		echo "Status: [fail] Account name: $user Date: $fecha"
+		echo " "
+	done
+	grep "Accepted password" logs.txt | while read -r line; do
+		echo ${line} > linea.txt
+		fecha=$(cut -d " " -f 1,2,3 linea.txt)
+		user=$(cut -d " " -f 9 linea.txt)
+		echo "Status: [accept] Account name: $user Date: $fecha"
+		echo " "
+	done
+	rm logs.txt
+	rm linea.txt
+}	
 
 ###########################################################
 #                     20) SALIR                           #
