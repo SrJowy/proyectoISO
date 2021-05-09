@@ -226,11 +226,11 @@ function creandoEntornoVirutalPython3(){
 ###########################################################
 
 function instalandoLibreriasPythonLagunTest(){
-	pId = id -u
-	pGroup = id -g
-	sudo chown -R $pId:$pGroup
+	pId=$(id -u)
+	pGroup =$(id -g)
+	sudo chown -R $pId:$pGroup .
 	source /var/www/laguntest/public_html/.env/bin/activate
-	cp ./requirements.txt /var/www/laguntest/public_html/.env
+	sudo cp ./requirements.txt /var/www/laguntest/public_html/.env
 	sudo pip install -r requirements.txt
 	deactivate
 	
@@ -293,30 +293,19 @@ function viendoLogs(){
 function instalarSSH(){
 	sudo aptitude install ssh 
 	echo 'SSH (Secure SHell) es un software y protocolo que permite el acceso remoto a un servidor mediante un canal seguro con la información cifrada. Tambien puedes usarlo para controlar otro dispositivo. El software suele venir instalado en dispotivos Linux pero por si acaso puedes instalarlo con "sudo aptitude install openssh-server".
-	Para el cliente necesitas otro dispositivo. En Linux y Mac ya viene instalado el software necesario para poder conectarte a ellos, para Windows necesitaras el programa Putty. 
-	Una vez tengas cliente y servidor preparados asegurate de que SSH esta activado, para ello usa "systemctl enable ssh" en tu ordenador.  
-	Para conectarte al servidor necesitas el nombre de usuario, su IP y su contraseña. 
-	Para obtener la IP en Linux puedes usar "hostname -I" en la terminal del servidor remoto.
-	Ahora para conectarte al servidor usar "ssh usuario@IP" donde usuario es el nombre de usuario del servidor al que te quieres conectar.
-	Una vez hecho esto te pedira la contraseña introducela y ya estaras usando el servidor remotamente.'
-	echo 'Para ejecutar la applicación web desde un servidor remoto es necesario que cumplas los requisitos mencionados anteriormente.
-	Si tienes la IP, nombre de usuario y contraseña ya puedes empezar.' 
-	echo -e 'Introduce la IP del servidor remoto:'
-	read IP
-	echo -e 'Ahora introduce el nombre de usuario del servidor:'
-	read user
-	echo -e 'Primero de todo es necesario que tenga los archivos.
-	¿Tienes los archivos instalados en el servidor? [SI/NO]'
-	read respuesta
-	if [ $respuesta=NO ]
-	then
-		echo 'Se van a copiar los archivos de instalación al servidor web'
-		scp -r ../proyecto $user@$IP:/home/$user/
-		fi
-	echo 'Se va a instalar la aplicación en el servidor'
-		
-	echo 'Ahora vas a conectarte al sevidor'	
-	ssh $user@$IP 
+	Para el cliente necesitas otro dispositivo. En Linux y Mac ya viene instalado el software necesario para poder conectarte a ellos, para Windows necesitaras el programa Putty. Para este proyecto proponemos conectarte a una instancia de Ubuntu de un servidor de aws. Esta instancia estará activa temporalmente y para representar el proceso completo la instancia partira desde cero, es decir no tiene nada instalado y hay que pasarle los archivos del proyecto.  
+	Para asegurarte de que SSH esta activado usa usa "systemctl enable ssh" en tu ordenador.  
+	Para conectarte al servidor necesitas el nombre de usuario, su IP y contraseña (opcional).
+	Estos son los datos del servidor que hemos creado:
+	IP: 35.180.26.109
+	Usuario: Ubuntu
+	Contraseña: hay que incluir la ruta de una clave .pem en la conexión
+	Como este servidor no tiene los archivos tenemos que mandarselo. Para ello usaremos scp -i -r [path .pem] [path proyecto] usuario@IP:[path pegar]
+	scp -i -r 
+	-i indica que enviamos la clave .pem y -r copia recursivamente todo el directorio.
+	Ahora para conectarte al servidor usar "ssh -i [path .pem] usuario@IP".
+
+	'
 
 	
 }
