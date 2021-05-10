@@ -232,7 +232,7 @@ function instalandoLibreriasPythonLagunTest(){
 	source /var/www/laguntest/public_html/.env/bin/activate
 	sudo cp requirements.txt /var/www/laguntest/public_html/.env
 	cd /var/www/laguntest/public_html/.env
-	sudo pip3 install -r requirements.txt
+	pip3 install -r requirements.txt
 	deactivate
 	
 }
