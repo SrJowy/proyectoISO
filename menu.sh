@@ -92,20 +92,20 @@ function createVirtualHost(){
 	sudo sed -i "s/80/8888/g" /etc/apache2/sites-available/laguntest.conf
 	sudo sed -i "s/\/var\/www\/html/\/var\/www\/laguntest\/public_html/g" /etc/apache2/sites-available/laguntest.conf
 	sudo sed -i "s/<\/VirtualHost>/\<Directory \/var\/www\/laguntest\/public_html\>\nOptions Indexes FollowSymLinks MultiViews\nAllowOverride All\nOrder allow,deny\nallow from all\n<\/Directory>\n<\/VirtualHost>\n/g" /etc/apache2/sites-available/laguntest.conf
-aux2=$(grep 8888 /etc/apache2/ports.conf)
-echo $aux2
-if [ -z "$aux2" ]
-then
-    echo -e "Añadiendo puerto Listen 8888\n"    
-    sudo sed -i "s/Listen 80/Listen 80\nListen 8888/g"  /etc/apache2/ports.conf
-    sleep 1
-else
-    echo -e "Ya esta añadido\n"    
-fi
-cd /etc/apache2/sites-available
-sudo a2ensite laguntest.conf
-sudo systemctl reload apache2
-sudo systemctl start apache2
+	aux2=$(grep 8888 /etc/apache2/ports.conf)
+	echo $aux2
+	if [ -z "$aux2" ]
+	then
+		echo -e "Añadiendo puerto Listen 8888\n"    
+		sudo sed -i "s/Listen 80/Listen 80\nListen 8888/g"  /etc/apache2/ports.conf
+		sleep 1
+	else
+		echo -e "Ya esta añadido\n"    
+	fi
+	cd /etc/apache2/sites-available
+	sudo a2ensite laguntest.conf
+	sudo systemctl reload apache2
+	sudo systemctl start apache2
 }
 
 ###########################################################
@@ -126,14 +126,14 @@ function phpInstall() {
 	aux3=$aux$aux2
 	if [ -z "$aux3" ]
 	then
-			echo "Instalando el modulo php ...\n"    
+			echo -e "Instalando el modulo php ...\n"    
     		sudo apt install php libapache2-mod-php
     		sudo systemctl restart apache2
-    		echo "El modulo php se ha instalado correctamente\n"    
+    		echo -e "El modulo php se ha instalado correctamente\n"    
     		sleep 1
 		else
     #PHP instalado
-    		echo "PHP ya estaba instalado\n"     
+    		echo -e "PHP ya estaba instalado \n"     
     		sleep 1
 		fi
 }
@@ -160,13 +160,13 @@ function instalandoPaquetesUbuntuLagunTest() {
 	aux3=$aux$aux2
 	if [ -z "$aux3" ]
 	then
-		echo "Instalando python3-pip... \n"
+		echo -e "Instalando python3-pip... \n"
 		sudo apt install python3-pip
 		sudo python3 -m  pip install --upgrade pip
-		echo "El módulo se ha instalado correctamente \n"
+		echo -e "El módulo se ha instalado correctamente \n"
 		sleep 1
 	else
-		echo "python3-pip ya estaba instalado \n"
+		echo -e "python3-pip ya estaba instalado \n"
 		sleep 1
 	fi
 	#INSTALAR DOS2UNIX
@@ -175,12 +175,12 @@ function instalandoPaquetesUbuntuLagunTest() {
 	aux3=$aux$aux2
 	if [ -z "$aux3" ]
 	then
-		echo "Instalando dos2unix... \n"
+		echo -e "Instalando dos2unix... \n"
 		sudo apt install dos2unix
-		echo "El módulo se ha instalado correctamente \n"
+		echo -e "El módulo se ha instalado correctamente \n"
 		sleep 1
 	else
-		echo "dos2unix ya estaba instalado \n"
+		echo -e "dos2unix ya estaba instalado \n"
 		sleep 1
 	fi
 	#INSTALAR LIBRSVG2-BIN
@@ -189,12 +189,12 @@ function instalandoPaquetesUbuntuLagunTest() {
 	aux3=$aux$aux2
 	if [ -z "$aux3" ]
 	then
-		echo "Instalando librsvg2-bin ... \n"
+		echo -e "Instalando librsvg2-bin ... \n"
 		sudo apt install librsvg2-bin 
-		echo "El módulo se ha instalado correctamente \n"
+		echo -e "El módulo se ha instalado correctamente \n"
 		sleep 1
 	else
-		echo "librsvg2-bin ya estaba instalado \n"
+		echo -e "librsvg2-bin ya estaba instalado \n"
 		sleep 1
 	fi
 }
@@ -213,7 +213,7 @@ function creandoEntornoVirutalPython3(){
 		cd /var/www/laguntest/public_html/
 		if [ -d ".env" ]
 		then
-			echo "Entorno virtual creado\n"
+			echo -e "Entorno virtual creado\n"
 			sleep 1	
 		else
 			sudo virtualenv -p python3 .env
@@ -227,11 +227,12 @@ function creandoEntornoVirutalPython3(){
 
 function instalandoLibreriasPythonLagunTest(){
 	pId=$(id -u)
-	pGroup =$(id -g)
+	pGroup=$(id -g)
 	sudo chown -R $pId:$pGroup .
 	source /var/www/laguntest/public_html/.env/bin/activate
-	sudo cp ./requirements.txt /var/www/laguntest/public_html/.env
-	sudo pip install -r requirements.txt
+	sudo cp requirements.txt /var/www/laguntest/public_html/.env
+	cd /var/www/laguntest/public_html/.env
+	sudo pip3 install -r requirements.txt
 	deactivate
 	
 }
@@ -241,7 +242,7 @@ function instalandoLibreriasPythonLagunTest(){
 ###########################################################
 
 function instalandoAplicacionLaguntest(){
-	echo "Instalando la aplicación..."
+	echo -e "Instalando la aplicación...\n"
 	sudo cp *.php *.sh *.py *.gif /var/www/laguntest/public_html/
 	sudo cp -r textos /var/www/laguntest/public_html/
 }
@@ -251,7 +252,7 @@ function instalandoAplicacionLaguntest(){
 ###########################################################
 
 function pasoPropiedad(){
-	echo "Dando permisos a www-data..."
+	echo -e "Dando permisos a www-data...\n"
 	sudo chown -R www-data:www-data /var/www
 }
 
@@ -261,8 +262,8 @@ function pasoPropiedad(){
 
 function comprobarWebprocess(){
 	cd /var/www/laguntest/public_html/
-	sudo chmod uo+x webprocess.sh
-	sudo chown -R www-data:www-data webprocess.sh
+	sudo chmod u+x webprocess.sh
+	sudo chown -R www-data:www-data /var/www/
 	sudo -u root su - www-data -s /bin/bash
 	cd /var/www/laguntest/public_html/
 	./webprocess.sh textos/english.doc.txt
@@ -282,7 +283,7 @@ function visualizandoAplicacion(){
 ###########################################################
 
 function viendoLogs(){
-	echo 'visualizando el documento de errores..'
+	echo -e 'visualizando el documento de errores..\n'
 	tail -n100 /var/log/apache2/error.log
 }
 
