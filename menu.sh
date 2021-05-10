@@ -322,6 +322,10 @@ function controlConexiones() {
 		echo ${line} > linea.txt
 		fecha=$(cut -d " " -f 1,2,3 linea.txt)
 		user=$(cut -d " " -f 9 linea.txt)
+		if [ $user = "times:" ]
+		then 
+			user=$(cut -d " " -f 14 linea.txt)
+		fi
 		echo "Status: [fail] Account name: $user Date: $fecha"
 		echo " "
 	done
