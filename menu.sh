@@ -293,21 +293,31 @@ function viendoLogs(){
 
 function instalarSSH(){
 	sudo aptitude install ssh 
-	echo 'SSH (Secure SHell) es un software y protocolo que permite el acceso remoto a un servidor mediante un canal seguro con la información cifrada. Tambien puedes usarlo para controlar otro dispositivo. El software suele venir instalado en dispotivos Linux pero por si acaso puedes instalarlo con "sudo aptitude install openssh-server".
-	Para el cliente necesitas otro dispositivo. En Linux y Mac ya viene instalado el software necesario para poder conectarte a ellos, para Windows necesitaras el programa Putty. Para este proyecto proponemos conectarte a una instancia de Ubuntu de un servidor de aws. Esta instancia estará activa temporalmente y para representar el proceso completo la instancia partira desde cero, es decir no tiene nada instalado y hay que pasarle los archivos del proyecto.  
-	Para asegurarte de que SSH esta activado usa usa "systemctl enable ssh" en tu ordenador.  
+	echo -e 'SSH (Secure Shell) es un software y protocolo que permite el acceso remoto a un servidor mediante un canal seguro con la información cifrada. También puedes usarlo para controlar otro dispositivo. El software suele venir instalado en dispositivos Linux pero por si acaso puedes instalarlo con "sudo aptitude install openssh-server".
+	
+	Para el cliente necesitas otro dispositivo. En Linux y Mac ya viene instalado el software necesario para poder conectarte a ellos, para Windows necesitarás el programa Putty. Para este proyecto proponemos conectarte a una instancia de Ubuntu de un servidor de aws. Esta instancia estará activa temporalmente y para representar el proceso completo la instancia partirá desde cero, es decir no tiene nada instalado y hay que pasarle los archivos del proyecto.  
+	
+	Para asegurarte de que SSH está activado usa usa "systemctl enable ssh" en tu ordenador.  
 	Para conectarte al servidor necesitas el nombre de usuario, su IP y contraseña (opcional).
 	Estos son los datos del servidor que hemos creado:
-	IP: 35.180.26.109
+	IP: 13.51.108.33
 	Usuario: Ubuntu
-	Contraseña: hay que incluir la ruta de una clave .pem en la conexión
-	Como este servidor no tiene los archivos tenemos que mandarselo. Para ello usaremos scp -i -r [path .pem] [path proyecto] usuario@IP:[path pegar]
-	scp -i -r 
+	Contraseña: hay que incluir la ruta de una clave .pem incluida en el proyecto
+
+	Como este servidor no tiene los archivos tenemos que mandarselo. Para ello usaremos scp -i -r [path Contraseña.pem] [path proyecto] usuario@IP:[path destino].
+	SCP (secure copy protocol) es un protocolo basado en SSH para el envío de archivos a servidores remotos.
 	-i indica que enviamos la clave .pem y -r copia recursivamente todo el directorio.
-	Ahora para conectarte al servidor usar "ssh -i [path .pem] usuario@IP".
-
+	
+	Ahora para conectarte al servidor usa "ssh -i [path Contraseña.pem] usuario@IP".
+	En caso de querer conectarte al servidor proporcionado el comando será:
+	ssh -i [path Contraseña.pem] Ubuntu@13.51.108.33
+	Una vez dentro puedes instalar el programa usando installer.sh que contiene referencias a los pasos necesarios para instalar el programa.
+	
+	Tras instalarlo podrás usar el programa en el servidor remoto. Al ser un ser un servidor remoto al que se accede desde la consola es preferible que ejecutes el archivo webprocess.sh en vez de usar la app con Firefox (para ello es necesario añadir -X en el comando ssh), cargar el modo gráfico en esta situación suele causar problemas por los drivers gráficos.  
+	
+	Por último hay que añadir que el servidor estará activado hasta el Domingo 23 de Mayo, que no cuenta con ningún software extra instalado y que tiene unas capacidades muy limitadas.
+	
 	'
-
 	
 }
 
@@ -402,7 +412,7 @@ do
 			15) comprobarWebprocess;;
 			16) visualizandoAplicacion;;
 			17) viendoLogs;;
-			18)	instalarSHH;;
+			18)	instalarSSH;;
 			19)	controlConexiones;;
 			20) fin;;
 			*) ;;
