@@ -5,7 +5,7 @@
 #                  1) INSTALL APACHE                     #
 ###########################################################
 function apacheInstall()
-{																		#si se instala en una maquina nueva es necesario
+{																		#si se instala en un sistema nuevo es necesario
 	sudo apt update
 	sudo apt install build-essential
 	sudo apt install aptitude 										
@@ -13,12 +13,12 @@ function apacheInstall()
 	aux=$(aptitude show apache2 | grep "State: installed")
 	aux2=$(aptitude show apache2 | grep "Estado: instalado")
 	aux3=$aux$aux2
-	if [ -z "$aux3" ]
+	if [ -z "$aux3" ]													# if_[_-z_"$aux"_] ESPACIOS -z significa que la variable esta vacia
 	then 
- 	  echo "instalando ..."
+ 	  echo -e "instalando ...\n"										#echo -e (necesario para \n) \n salto de linea
  	  sudo apt-get install apache2
 	else
-   	  echo "apache ya estaba instalado"
+   	  echo -e "apache ya estaba instalado\n"
     
 	fi 
 }
@@ -28,13 +28,13 @@ function apacheInstall()
 ###########################################################
 
 function apacheStart() {
-	ps aux | grep apache2 | grep -v grep
-	if [ $? != 0 ]
+	ps -aux | grep apache2 | grep -v grep								#ps = procesos actuales / -a procesos de otros usuarios / -u procesos del usuario que ejecuta ps / -x procesos no controlados por ninguna terminal  
+	if [ $? != 0 ]														#Codigo de salida del pipe más reciente, equivalente a aux = comand1 | comand2
 	then
-		echo "inicializando apache..."
+		echo -e "inicializando apache...\n"
 		/etc/init.d/apache2 start
 	else
-		echo "apache ya está iniciado"
+		echo -e "apache ya está iniciado\n"
 	fi
 } 
 
@@ -51,7 +51,7 @@ function apacheTets() {
 		echo "instalando net-tools"
 		sudo apt install net-tools
 	fi
-	sudo netstat -anp | grep "apache2" | grep :80
+	sudo netstat -anp | grep "apache2" | grep :80						#netstat -anp ver puertos abiertos, usar netstat -help si hay dudas
 }
 
 ###########################################################
@@ -71,7 +71,7 @@ function apacheIndex(){
 ###########################################################
 function personalIndex(){
 	
-	echo -e "Se va a cambiar la página HTML por defecto"
+	echo -e "Se va a cambiar la página HTML por defecto\n"
 	sudo cp ./index.html /var/www/html
 	sudo cp -r grupo /var/www/html
 	firefox http://127.0.0.1/index.html
@@ -85,12 +85,12 @@ function createVirtualHost(){
 	cd /var/www
 	sudo mkdir laguntest
 	cd laguntest
-	sudo mkdir -p public_html
+	sudo mkdir -p public_html												#caperta para los usuarios del programa que solo podran acceder a esto
 	sudo cp /var/www/html/index.html /var/www/laguntest/public_html/
-	sudo chown -R www-data:www-data /var/www/laguntest/public_html
-	sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/laguntest.conf
-	sudo sed -i "s/80/8888/g" /etc/apache2/sites-available/laguntest.conf
-	sudo sed -i "s/\/var\/www\/html/\/var\/www\/laguntest\/public_html/g" /etc/apache2/sites-available/laguntest.conf
+	sudo chown -R www-data:www-data /var/www/laguntest/public_html			#change owner -Recursivo usuario:grupo archivo
+	sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/laguntest.conf #fichero estandar con la configuracion de apache2
+	sudo sed -i "s/80/8888/g" /etc/apache2/sites-available/laguntest.conf	#sed sirve para cambiar partes de un archivo sin tener que abrirlo / -i insertar de forma permanente / "s(sustituir)/lo que se borra/lo que se escribe/g (todas las apariciones)" [ruta de archivo]
+	sudo sed -i "s/\/var\/www\/html/\/var\/www\/laguntest\/public_html/g" /etc/apache2/sites-available/laguntest.conf #si hay que modificar texto en el que salen / se añade \ antes de la barra 
 	sudo sed -i "s/<\/VirtualHost>/\<Directory \/var\/www\/laguntest\/public_html\>\nOptions Indexes FollowSymLinks MultiViews\nAllowOverride All\nOrder allow,deny\nallow from all\n<\/Directory>\n<\/VirtualHost>\n/g" /etc/apache2/sites-available/laguntest.conf
 	aux2=$(grep 8888 /etc/apache2/ports.conf)
 	echo $aux2
@@ -143,8 +143,8 @@ function phpInstall() {
 ###########################################################
 
 function phpTest(){
-    	sudo echo "<?php phpinfo(); ?>" > test.php
-    	sudo cp test.php /var/www/laguntest/public_html
+    	sudo echo "<?php phpinfo(); ?>" > test.php								#pasar el comando a test.php
+    	sudo cp test.php /var/www/laguntest/public_html		
             sudo chown -R www-data:www-data /var/www/laguntest/public_html
             firefox http://127.0.0.1:8888/test.php
 }
@@ -216,7 +216,7 @@ function creandoEntornoVirutalPython3(){
 			echo -e "Entorno virtual creado\n"
 			sleep 1	
 		else
-			sudo virtualenv -p python3 .env
+			sudo virtualenv -p python3 .env							#se crea el entorno virtual de python
 		fi
 	fi	
 }
@@ -241,9 +241,9 @@ function instalandoLibreriasPythonLagunTest(){
 #           13) INSTALAR APLICACION LAGUNTEST             #
 ###########################################################
 
-function instalandoAplicacionLaguntest(){
+function instalandoAplicacionLaguntest(){								#copiar los archivos a la carpeta public_html
 	echo -e "Instalando la aplicación...\n"
-	sudo cp *.php *.sh *.py *.gif /var/www/laguntest/public_html/
+	sudo cp *.php *.sh *.py *.gif *.pem /var/www/laguntest/public_html/	#.pem necesario para conectarse al servidor creado
 	sudo cp -r textos /var/www/laguntest/public_html/
 }
 
@@ -262,9 +262,9 @@ function pasoPropiedad(){
 
 function comprobarWebprocess(){
 	cd /var/www/laguntest/public_html/
-	sudo chmod u+x webprocess.sh
-	sudo chown -R www-data:www-data /var/www/
-	sudo -u root su - www-data -s /bin/bash
+	sudo chmod u+x webprocess.sh										#dar permisos de ejecucion a webprocess.sh
+	sudo chown -R www-data:www-data /var/www/							#cambiar owner de toda la caperta	
+	sudo -u root su - www-data -s /bin/bash								#cambiar de usuario
 	cd /var/www/laguntest/public_html/
 	./webprocess.sh textos/english.doc.txt
 }
@@ -284,7 +284,7 @@ function visualizandoAplicacion(){
 
 function viendoLogs(){
 	echo -e 'visualizando el documento de errores..\n'
-	tail -n100 /var/log/apache2/error.log
+	tail -n100 /var/log/apache2/error.log								#ultimas 100 lineas
 }
 
 ###########################################################
@@ -304,9 +304,12 @@ function instalarSSH(){
 	Usuario: Ubuntu
 	Contraseña: hay que incluir la ruta de una clave .pem incluida en el proyecto
 
-	Como este servidor no tiene los archivos tenemos que mandarselo. Para ello usaremos scp -i -r [path Contraseña.pem] [path proyecto] usuario@IP:[path destino].
+	Antes de nada es necesario cambiar los permisos de la clave .pem. Por si no está hecho usa "chmod 400 [path .pem]".
+	Como este servidor no tiene los archivos tenemos que mandarselo. Para ello usaremos scp -i [path Contraseña.pem] -r [path proyecto] usuario@IP:[path destino].
 	SCP (secure copy protocol) es un protocolo basado en SSH para el envío de archivos a servidores remotos.
-	-i indica que enviamos la clave .pem y -r copia recursivamente todo el directorio.
+	-i indica que enviamos la clave .pem y -r copia recursivamente todo el directorio. 
+	El comando exacto que tendremos que introducir es:
+	scp -i Claves.pem -r ../proyecto/ ubuntu@13.51.167.44:/home/ubuntu
 	
 	Ahora para conectarte al servidor usa "ssh -i [path Contraseña.pem] usuario@IP".
 	En caso de querer conectarte al servidor proporcionado el comando será:
@@ -315,9 +318,7 @@ function instalarSSH(){
 	
 	Tras instalarlo podrás usar el programa en el servidor remoto. Al ser un ser un servidor remoto al que se accede desde la consola es preferible que ejecutes el archivo webprocess.sh en vez de usar la app con Firefox (para ello es necesario añadir -X en el comando ssh), cargar el modo gráfico en esta situación suele causar problemas por los drivers gráficos.  
 	
-	Por último hay que añadir que el servidor estará activado hasta el Domingo 23 de Mayo, que no cuenta con ningún software extra instalado y que tiene unas capacidades muy limitadas.
-	
-	'
+	Por último hay que añadir que el servidor estará activado hasta el Domingo 23 de Mayo, que no cuenta con ningún software extra instalado y que tiene unas capacidades muy limitadas.\n'
 	
 }
 
