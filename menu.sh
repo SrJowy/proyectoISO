@@ -279,7 +279,7 @@ function visualizandoAplicacion(){
 }
 
 ###########################################################
-#           17) VISUALIZAR LA APLICACION                  #
+#   17) VER LOS LOGS O ERRORES PRODUCIDOS POR APACHE      #
 ###########################################################
 
 function viendoLogs(){
