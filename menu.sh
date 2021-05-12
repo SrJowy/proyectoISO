@@ -316,7 +316,7 @@ function instalarSSH(){
 	Ahora para conectarte al servidor usa "ssh -i [path Contraseña.pem] usuario@IP".
 	En caso de querer conectarte al servidor proporcionado el comando será:
 	ssh -i [path Contraseña.pem] Ubuntu@13.51.85.233
-	Una vez dentro puedes instalar el programa usando installer.sh que contiene referencias a los pasos necesarios para instalar el programa.
+	Una vez dentro puedes instalar el programa con menu.sh, ten encuenta que algunas funciones no son necesarias.
 	
 	Tras instalarlo podrás usar el programa en el servidor remoto. Al ser un ser un servidor remoto al que se accede desde la consola es preferible que ejecutes el archivo webprocess.sh en vez de usar la app con Firefox (para ello es necesario añadir -X en el comando ssh), cargar el modo gráfico en esta situación suele causar problemas por los drivers gráficos.  
 	
