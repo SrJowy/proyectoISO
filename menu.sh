@@ -1,5 +1,6 @@
 #!/bin/bash
 
+path=$(cd `dirname $0`; pwd)											#obtenemos la ruta del menu.sh
 
 ###########################################################
 #                  1) INSTALL APACHE                     #
@@ -60,7 +61,7 @@ function apacheTets() {
 function apacheIndex(){
 	echo -e "¿Quieres abrir la página web por defecto?(S/N)\n"
 	read respuesta
-	if [ $respuesta == "S" ]
+	if [[ $respuesta == "S" || $respuesta == "s" ]]
 		then
 			firefox http://localhost
 		fi
@@ -143,10 +144,10 @@ function phpInstall() {
 ###########################################################
 
 function phpTest(){
-    	sudo echo "<?php phpinfo(); ?>" > test.php								#pasar el comando a test.php
-    	sudo cp test.php /var/www/laguntest/public_html		
-            sudo chown -R www-data:www-data /var/www/laguntest/public_html
-            firefox http://127.0.0.1:8888/test.php
+    sudo echo "<?php phpinfo(); ?>" > test.php								#pasar el comando a test.php
+	sudo cp test.php /var/www/laguntest/public_html		
+	sudo chown -R www-data:www-data /var/www/laguntest/public_html
+    firefox http://127.0.0.1:8888/test.php
 }
 
 ###########################################################
@@ -218,7 +219,7 @@ function creandoEntornoVirutalPython3(){
 		else
 			sudo virtualenv -p python3 .env							#se crea el entorno virtual de python
 		fi
-	fi	
+	fi
 }
 
 ###########################################################
@@ -234,7 +235,6 @@ function instalandoLibreriasPythonLagunTest(){
 	cd /var/www/laguntest/public_html/.env
 	pip3 install -r requirements.txt
 	deactivate
-	
 }
 
 ###########################################################
@@ -265,8 +265,10 @@ function comprobarWebprocess(){
 	sudo chmod u+x webprocess.sh										#dar permisos de ejecucion a webprocess.sh
 	sudo chown -R www-data:www-data /var/www/							#cambiar owner de toda la caperta	
 	sudo -u root su - www-data -s /bin/bash								#cambiar de usuario
-	cd /var/www/laguntest/public_html/
-	./webprocess.sh textos/english.doc.txt
+	#Ejecutar los siguientes comandos una vez cambiado el usuario para relizar la comprobación
+	#cd /var/www/laguntest/public_html/
+	#./webprocess.sh textos/english.doc.txt
+	#Una vez realizado lo anterior: exit
 }
 
 
@@ -300,7 +302,7 @@ function instalarSSH(){
 	Para asegurarte de que SSH está activado usa usa "systemctl enable ssh" en tu ordenador.  
 	Para conectarte al servidor necesitas el nombre de usuario, su IP y contraseña (opcional).
 	Estos son los datos del servidor que hemos creado:
-	IP: 13.51.108.33
+	IP: 13.51.85.233
 	Usuario: Ubuntu
 	Contraseña: hay que incluir la ruta de una clave .pem incluida en el proyecto
 
@@ -309,11 +311,11 @@ function instalarSSH(){
 	SCP (secure copy protocol) es un protocolo basado en SSH para el envío de archivos a servidores remotos.
 	-i indica que enviamos la clave .pem y -r copia recursivamente todo el directorio. 
 	El comando exacto que tendremos que introducir es:
-	scp -i Claves.pem -r ../proyecto/ ubuntu@13.51.167.44:/home/ubuntu
+	scp -i Claves.pem -r ../proyecto/ ubuntu@13.51.85.233:/home/ubuntu
 	
 	Ahora para conectarte al servidor usa "ssh -i [path Contraseña.pem] usuario@IP".
 	En caso de querer conectarte al servidor proporcionado el comando será:
-	ssh -i [path Contraseña.pem] Ubuntu@13.51.108.33
+	ssh -i [path Contraseña.pem] Ubuntu@13.51.85.233
 	Una vez dentro puedes instalar el programa usando installer.sh que contiene referencias a los pasos necesarios para instalar el programa.
 	
 	Tras instalarlo podrás usar el programa en el servidor remoto. Al ser un ser un servidor remoto al que se accede desde la consola es preferible que ejecutes el archivo webprocess.sh en vez de usar la app con Firefox (para ello es necesario añadir -X en el comando ssh), cargar el modo gráfico en esta situación suele causar problemas por los drivers gráficos.  
@@ -328,13 +330,15 @@ function instalarSSH(){
 
 function controlConexiones() {
 	cat /var/log/auth* > ./logs.txt
+	cat /var/log/auth.log.? >> ./logs.txt
+	zcat /var/log/auth*.gz >> ./logs.txt
 	echo "Los intentos de conexión por ssh, esta semana y este mes han sido:"
 	echo " "
 	grep "Failed password" logs.txt | while read -r line; do
-		echo ${line} > linea.txt
+		echo $line > linea.txt
 		fecha=$(cut -d " " -f 1,2,3 linea.txt)
 		user=$(cut -d " " -f 9 linea.txt)
-		if [ $user = "times:" ]
+		if [ $user = "times:" ]											#En caso de que haya repeticiones del mismo comando
 		then 
 			user=$(cut -d " " -f 14 linea.txt)
 		fi
@@ -342,9 +346,13 @@ function controlConexiones() {
 		echo " "
 	done
 	grep "Accepted password" logs.txt | while read -r line; do
-		echo ${line} > linea.txt
+		echo $line > linea.txt
 		fecha=$(cut -d " " -f 1,2,3 linea.txt)
 		user=$(cut -d " " -f 9 linea.txt)
+		if [ $user = "times:" ]											#En caso de que haya repeticiones del mismo comando
+		then 
+			user=$(cut -d " " -f 14 linea.txt)
+		fi
 		echo "Status: [accept] Account name: $user Date: $fecha"
 		echo " "
 	done
@@ -371,6 +379,7 @@ opcionmenuppal=0
 while test $opcionmenuppal -ne 20
 do
 	#Muestra el menu
+		cd $path
       	echo -e "1) Instala Apache \n"
 		echo -e "2) Iniciar Apache \n"
 		echo -e "3) Testear puerto 80 \n"
