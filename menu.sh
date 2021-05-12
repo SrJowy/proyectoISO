@@ -379,7 +379,7 @@ opcionmenuppal=0
 while test $opcionmenuppal -ne 20
 do
 	#Muestra el menu
-		cd $path
+		cd $path														#Para solucionar cualquier problema de rutas, la actualizamos cada vez que volvamos al menú
       	echo -e "1) Instala Apache \n"
 		echo -e "2) Iniciar Apache \n"
 		echo -e "3) Testear puerto 80 \n"
