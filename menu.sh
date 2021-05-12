@@ -330,7 +330,7 @@ function instalarSSH(){
 ###########################################################
 
 function controlConexiones() {
-	cat /var/log/auth* > ./logs.txt
+	cat /var/log/auth.log > ./logs.txt
 	cat /var/log/auth.log.? >> ./logs.txt
 	zcat /var/log/auth*.gz >> ./logs.txt
 	echo "Los intentos de conexión por ssh, esta semana y este mes han sido:"
