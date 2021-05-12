@@ -210,7 +210,7 @@ function creandoEntornoVirutalPython3(){
 	then 
 		instalandoPaquetesUbuntuLagunTest
 	else
-		sudo pip3 install virtualenv
+		pip3 install virtualenv
 		cd /var/www/laguntest/public_html/
 		if [ -d ".env" ]
 		then
@@ -227,6 +227,7 @@ function creandoEntornoVirutalPython3(){
 ###########################################################
 
 function instalandoLibreriasPythonLagunTest(){
+	cd /var/www/laguntest/public_html
 	pId=$(id -u)
 	pGroup=$(id -g)
 	sudo chown -R $pId:$pGroup .
