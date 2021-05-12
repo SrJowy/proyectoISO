@@ -209,17 +209,17 @@ function creandoEntornoVirutalPython3(){
 	if [ -z aux3 ]
 	then 
 		instalandoPaquetesUbuntuLagunTest
-	else
-		pip3 install virtualenv
-		cd /var/www/laguntest/public_html/
-		if [ -d ".env" ]
-		then
-			echo -e "Entorno virtual creado\n"
-			sleep 1	
-		else
-			sudo virtualenv -p python3 .env							#se crea el entorno virtual de python
-		fi
 	fi
+	sudo pip3 install virtualenv
+	cd /var/www/laguntest/public_html/
+	if [ -d ".env" ]
+	then
+		echo -e "Entorno virtual creado\n"
+		sleep 1	
+	else
+		sudo virtualenv -p python3 .env	#se crea el entorno virtual de python
+	fi
+
 }
 
 ###########################################################
@@ -232,6 +232,7 @@ function instalandoLibreriasPythonLagunTest(){
 	pGroup=$(id -g)
 	sudo chown -R $pId:$pGroup .
 	source /var/www/laguntest/public_html/.env/bin/activate
+	cd $path
 	sudo cp requirements.txt /var/www/laguntest/public_html/.env
 	cd /var/www/laguntest/public_html/.env
 	pip3 install -r requirements.txt
@@ -246,6 +247,7 @@ function instalandoAplicacionLaguntest(){								#copiar los archivos a la carpe
 	echo -e "Instalando la aplicación...\n"
 	sudo cp *.php *.sh *.py *.gif *.pem /var/www/laguntest/public_html/	#.pem necesario para conectarse al servidor creado
 	sudo cp -r textos /var/www/laguntest/public_html/
+	sleep 1
 }
 
 ###########################################################
@@ -255,6 +257,7 @@ function instalandoAplicacionLaguntest(){								#copiar los archivos a la carpe
 function pasoPropiedad(){
 	echo -e "Dando permisos a www-data...\n"
 	sudo chown -R www-data:www-data /var/www
+	sleep 1
 }
 
 ###########################################################
@@ -287,7 +290,8 @@ function visualizandoAplicacion(){
 
 function viendoLogs(){
 	echo -e 'visualizando el documento de errores..\n'
-	tail -n100 /var/log/apache2/error.log								#ultimas 100 lineas
+	tail -n100 /var/log/apache2/error.log
+	sleep 1								#ultimas 100 lineas
 }
 
 ###########################################################
