@@ -330,35 +330,34 @@ function instalarSSH(){
 ###########################################################
 
 function controlConexiones() {
-	cat /var/log/auth.log > ./logs.txt
-	cat /var/log/auth.log.? >> ./logs.txt
-	zcat /var/log/auth*.gz >> ./logs.txt
-	echo "Los intentos de conexión por ssh, esta semana y este mes han sido:"
-	echo " "
+	cat /var/log/auth.log &> ./logs.txt
+	cat /var/log/auth.log.? &>> ./logs.txt
+	zcat /var/log/auth*.gz &>> ./logs.txt
+	echo -e "Los intentos de conexión por ssh, esta semana y este mes han sido:\n"
 	grep "Failed password" logs.txt | while read -r line; do
 		echo $line > linea.txt
 		fecha=$(cut -d " " -f 1,2,3 linea.txt)
 		user=$(cut -d " " -f 9 linea.txt)
-		if [ $user = "times:" ]											#En caso de que haya repeticiones del mismo comando
+		if [ $user = "times:" ]											#En caso de que haya repeticiones del mismo comando a la misma hora
 		then 
 			user=$(cut -d " " -f 14 linea.txt)
 		fi
-		echo "Status: [fail] Account name: $user Date: $fecha"
-		echo " "
+		echo -e "Status: [fail] Account name: $user Date: $fecha\n"
 	done
 	grep "Accepted password" logs.txt | while read -r line; do
 		echo $line > linea.txt
 		fecha=$(cut -d " " -f 1,2,3 linea.txt)
 		user=$(cut -d " " -f 9 linea.txt)
-		if [ $user = "times:" ]											#En caso de que haya repeticiones del mismo comando
+		if [ $user = "times:" ]											#En caso de que haya repeticiones del mismo comando a la misma hora
 		then 
 			user=$(cut -d " " -f 14 linea.txt)
 		fi
-		echo "Status: [accept] Account name: $user Date: $fecha"
-		echo " "
+		echo -e  "Status: [accept] Account name: $user Date: $fecha\n"
 	done
+	rm linea.txt &>> logs.txt
 	rm logs.txt
-	rm linea.txt
+	
+	sleep 1
 }	
 
 ###########################################################
